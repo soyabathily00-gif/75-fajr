@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import { RULES, DAILY_RULES, CATEGORIES, CATEGORY_EMOJI, getRulesByCategory } from '../lib/rules'
+import { RULES, DAILY_RULES, CATEGORIES, CATEGORY_ICON, getRulesByCategory } from '../lib/rules'
 import ChecklistItem from '../components/ChecklistItem'
 import PhotoUploader from '../components/PhotoUploader'
+import MilestoneBar from '../components/MilestoneBar'
+import TaskNoteModal from '../components/TaskNoteModal'
+import PersonalChallenges from '../components/PersonalChallenges'
 
 const RADIUS = 42
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS
@@ -31,10 +34,11 @@ function getDayNumber() {
 }
 
 export default function Dashboard({ user, onLogout }) {
-  const [logs, setLogs] = useState({})         // { ruleId: { completed, photo_url } }
-  const [weeklyLogs, setWeeklyLogs] = useState({}) // { ruleId: count }
+  const [logs, setLogs] = useState({})
+  const [weeklyLogs, setWeeklyLogs] = useState({})
   const [loading, setLoading] = useState(true)
   const [photoRule, setPhotoRule] = useState(null)
+  const [noteRule, setNoteRule] = useState(null)
   const [celebrated, setCelebrated] = useState(false)
 
   const TODAY = getToday()
@@ -47,15 +51,13 @@ export default function Dashboard({ user, onLogout }) {
   const allDailyDone = dailyCompleted === DAILY_RULES.length
   const progress = DAILY_RULES.length > 0 ? dailyCompleted / DAILY_RULES.length : 0
 
-  useEffect(() => {
-    loadLogs()
-  }, [user.id])
+  useEffect(() => { loadLogs() }, [user.id])
 
   async function loadLogs() {
     const [todayRes, weekRes] = await Promise.all([
       supabase
         .from('daily_logs')
-        .select('rule_id, completed, photo_url')
+        .select('rule_id, completed, photo_url, note')
         .eq('user_id', user.id)
         .eq('log_date', TODAY),
       supabase
@@ -68,7 +70,7 @@ export default function Dashboard({ user, onLogout }) {
 
     const todayMap = {}
     for (const row of todayRes.data ?? []) {
-      todayMap[row.rule_id] = { completed: row.completed, photo_url: row.photo_url }
+      todayMap[row.rule_id] = { completed: row.completed, photo_url: row.photo_url, note: row.note }
     }
     setLogs(todayMap)
 
@@ -88,8 +90,11 @@ export default function Dashboard({ user, onLogout }) {
       return
     }
 
-    // Weekly rules are one-directional: click once to log today's session
-    // Clicking again on the same day does nothing (prevents 1→0 regression)
+    if (!currentlyDone && rule.id === 'R12') {
+      setNoteRule(rule)
+      return
+    }
+
     if (rule.type === 'weekly') {
       if (currentlyDone) return
       await upsertLog(rule, true, null)
@@ -99,7 +104,7 @@ export default function Dashboard({ user, onLogout }) {
     await upsertLog(rule, !currentlyDone, null)
   }
 
-  async function upsertLog(rule, completed, photoUrl) {
+  async function upsertLog(rule, completed, photoUrl, note = null) {
     const payload = {
       user_id: user.id,
       log_date: TODAY,
@@ -108,6 +113,7 @@ export default function Dashboard({ user, onLogout }) {
       completed_at: completed ? new Date().toISOString() : null,
     }
     if (photoUrl !== null) payload.photo_url = photoUrl
+    if (note !== null) payload.note = note
 
     await supabase
       .from('daily_logs')
@@ -118,6 +124,7 @@ export default function Dashboard({ user, onLogout }) {
       [rule.id]: {
         completed,
         photo_url: photoUrl ?? prev[rule.id]?.photo_url ?? null,
+        note: note ?? prev[rule.id]?.note ?? null,
       },
     }))
 
@@ -143,6 +150,11 @@ export default function Dashboard({ user, onLogout }) {
     setPhotoRule(null)
   }
 
+  async function handleNoteConfirm(note) {
+    await upsertLog(noteRule, true, null, note || null)
+    setNoteRule(null)
+  }
+
   async function handleDayComplete() {
     if (!allDailyDone || celebrated) return
     setCelebrated(true)
@@ -156,30 +168,25 @@ export default function Dashboard({ user, onLogout }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-[#f5f5f7]">
         <div className="w-8 h-8 border-4 border-gray-200 border-t-gray-600 rounded-full animate-spin" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-40">
+    <div className="min-h-screen bg-[#f5f5f7] pb-40">
       {/* Header */}
       <div className="bg-white px-5 pt-14 pb-5 shadow-sm">
         <div className="flex items-center justify-between gap-4">
-          {/* Day info */}
           <div className="flex-1 min-w-0">
-            <p className="text-xs text-gray-400 uppercase tracking-widest font-semibold mb-0.5">
-              75 Fajr
-            </p>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-4xl font-bold text-gray-900 leading-none">{dayNumber}</span>
-              <span className="text-lg text-gray-400 font-normal">/ 75</span>
+              <span className="text-5xl font-black text-[#111] leading-none">{dayNumber}</span>
+              <span className="text-xl text-gray-300 font-light">/ 75</span>
             </div>
             <p className="text-sm text-gray-400 mt-1 capitalize truncate">{dateLabel}</p>
           </div>
 
-          {/* Circular progress */}
           <div className="flex flex-col items-center flex-shrink-0">
             <div className="relative w-20 h-20">
               <svg viewBox="0 0 100 100" width="80" height="80" className="-rotate-90">
@@ -192,18 +199,16 @@ export default function Dashboard({ user, onLogout }) {
                   strokeLinecap="round"
                   strokeDasharray={CIRCUMFERENCE}
                   strokeDashoffset={CIRCUMFERENCE * (1 - progress)}
-                  style={{ transition: 'stroke-dashoffset 0.5s ease' }}
+                  style={{ transition: 'stroke-dashoffset 0.6s cubic-bezier(0.34,1.56,0.64,1)' }}
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-lg font-bold text-gray-900 leading-none">{dailyCompleted}</span>
-                <span className="text-xs text-gray-400 leading-none mt-0.5">/{DAILY_RULES.length}</span>
+                <span className="text-lg font-black text-[#111] leading-none">{dailyCompleted}</span>
+                <span className="text-[10px] text-gray-400 leading-none mt-0.5">/{DAILY_RULES.length}</span>
               </div>
             </div>
-            <p className="text-xs text-gray-400 mt-1">règles</p>
           </div>
 
-          {/* Avatar / logout */}
           <button
             onClick={onLogout}
             className="w-11 h-11 rounded-full flex-shrink-0 flex items-center justify-center shadow-sm active:scale-90 transition-transform"
@@ -214,15 +219,25 @@ export default function Dashboard({ user, onLogout }) {
         </div>
       </div>
 
-      {/* Rules grouped by category */}
-      <div className="px-4 pt-4 flex flex-col gap-3">
+      {/* Milestone bar */}
+      <div className="bg-white mt-3 mx-4 rounded-2xl shadow-sm">
+        <MilestoneBar dayNumber={dayNumber} avatarColor={user.avatar_color} />
+      </div>
+
+      {/* Rules by category */}
+      <div className="px-4 pt-3 flex flex-col gap-3">
         {CATEGORIES.map(category => {
           const rules = getRulesByCategory(category)
+          const iconPath = CATEGORY_ICON[category]
           return (
             <div key={category} className="bg-white rounded-2xl px-4 pt-3 pb-1 shadow-sm">
               <div className="flex items-center gap-2 pb-2 border-b border-gray-50">
-                <span className="text-base">{CATEGORY_EMOJI[category]}</span>
-                <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                {iconPath && (
+                  <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d={iconPath} />
+                  </svg>
+                )}
+                <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">
                   {category}
                 </span>
               </div>
@@ -233,6 +248,7 @@ export default function Dashboard({ user, onLogout }) {
                     rule={rule}
                     checked={logs[rule.id]?.completed ?? false}
                     weeklyCount={weeklyLogs[rule.id] ?? 0}
+                    note={logs[rule.id]?.note ?? null}
                     onToggle={() => handleToggle(rule)}
                   />
                 ))}
@@ -240,30 +256,32 @@ export default function Dashboard({ user, onLogout }) {
             </div>
           )
         })}
+
+        {/* Personal challenges */}
+        <PersonalChallenges userId={user.id} avatarColor={user.avatar_color} />
       </div>
 
       {/* Sticky bottom CTA */}
-      <div className="fixed bottom-16 left-0 right-0 px-4 pb-2 pt-6 bg-gradient-to-t from-gray-50 via-gray-50/95 to-transparent">
+      <div className="fixed bottom-16 left-0 right-0 px-4 pb-2 pt-8 bg-gradient-to-t from-[#f5f5f7] via-[#f5f5f7]/95 to-transparent">
         <button
           onClick={handleDayComplete}
           disabled={!allDailyDone}
           className={`w-full py-4 rounded-2xl font-semibold text-base transition-all duration-300 ${
             allDailyDone && !celebrated
-              ? 'bg-green-500 text-white shadow-lg shadow-green-200/60 active:scale-95'
+              ? 'bg-[#111] text-white shadow-lg active:scale-[0.98]'
               : allDailyDone && celebrated
-              ? 'bg-green-100 text-green-600 cursor-default'
+              ? 'bg-green-500 text-white cursor-default'
               : 'bg-gray-100 text-gray-300 cursor-not-allowed'
           }`}
         >
           {celebrated
-            ? '✅ Journée validée — Barakallah !'
+            ? 'Journée validée — Barakallah'
             : allDailyDone
-            ? '🎉 Ma journée est complète !'
-            : `Ma journée est complète · ${dailyCompleted}/${DAILY_RULES.length}`}
+            ? 'Valider ma journée'
+            : `${dailyCompleted} / ${DAILY_RULES.length} règles complétées`}
         </button>
       </div>
 
-      {/* Photo upload modal */}
       {photoRule && (
         <PhotoUploader
           rule={photoRule}
@@ -271,6 +289,15 @@ export default function Dashboard({ user, onLogout }) {
           date={TODAY}
           onComplete={handlePhotoComplete}
           onCancel={() => setPhotoRule(null)}
+        />
+      )}
+
+      {noteRule && (
+        <TaskNoteModal
+          rule={noteRule}
+          existingNote={logs[noteRule.id]?.note ?? ''}
+          onConfirm={handleNoteConfirm}
+          onCancel={() => setNoteRule(null)}
         />
       )}
     </div>

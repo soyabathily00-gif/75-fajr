@@ -1,4 +1,4 @@
-import { CATEGORIES, CATEGORY_EMOJI, DAILY_RULES, getRulesByCategory } from '../lib/rules'
+import { CATEGORIES, CATEGORY_ICON, DAILY_RULES, getRulesByCategory } from '../lib/rules'
 
 export default function MemberDetailSheet({ member, logs, weeklyLogs, onClose }) {
   const dailyDone = DAILY_RULES.filter(r => logs[r.id]?.completed).length
@@ -65,8 +65,12 @@ export default function MemberDetailSheet({ member, logs, weeklyLogs, onClose })
             return (
               <div key={category} className="bg-gray-50 rounded-2xl px-4 pt-3 pb-1">
                 <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
-                  <span className="text-base">{CATEGORY_EMOJI[category]}</span>
-                  <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  {CATEGORY_ICON[category] && (
+                    <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d={CATEGORY_ICON[category]} />
+                    </svg>
+                  )}
+                  <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">
                     {category}
                   </span>
                 </div>

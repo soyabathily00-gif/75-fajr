@@ -3,9 +3,24 @@ import { supabase } from '../lib/supabase'
 import { DAILY_RULES } from '../lib/rules'
 
 const ORDER = ['Soya', 'Imran', 'Souleman']
+const START_DATE_KEY = '75fajr_start_date'
+
+const MILESTONES = [
+  { label: 'Fondation', end: 19 },
+  { label: 'Élan',      end: 38 },
+  { label: 'Maîtrise',  end: 57 },
+  { label: 'Victoire',  end: 75 },
+]
 
 function getToday() {
   return new Date().toISOString().split('T')[0]
+}
+
+function getDayNumber() {
+  const start = localStorage.getItem(START_DATE_KEY)
+  if (!start) return 1
+  const diff = Math.floor((new Date(getToday()) - new Date(start)) / 86400000)
+  return Math.max(1, Math.min(75, diff + 1))
 }
 
 function computeStreak(logs) {
@@ -45,6 +60,8 @@ export default function Stats({ user }) {
   const [kmStats, setKmStats] = useState({ owed: 0, run: 0 })
   const [loading, setLoading] = useState(true)
 
+  const dayNumber = getDayNumber()
+
   useEffect(() => { loadStats() }, [])
 
   async function loadStats() {
@@ -76,14 +93,14 @@ export default function Stats({ user }) {
     setMemberStats(stats)
 
     const totalOwed = (penaltiesRes.data ?? []).reduce((s, p) => s + p.km_owed, 0)
-    const totalRun = (runsRes.data ?? []).reduce((s, r) => s + r.km_run, 0)
+    const totalRun  = (runsRes.data ?? []).reduce((s, r) => s + r.km_run, 0)
     setKmStats({ owed: totalOwed, run: totalRun })
     setLoading(false)
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-[#f5f5f7]">
         <div className="w-8 h-8 border-4 border-gray-200 border-t-gray-600 rounded-full animate-spin" />
       </div>
     )
@@ -93,42 +110,92 @@ export default function Stats({ user }) {
   const kmPct = kmStats.owed > 0 ? Math.round((kmStats.run / kmStats.owed) * 100) : 100
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-[#f5f5f7] pb-24">
       <div className="bg-white px-5 pt-14 pb-4 shadow-sm">
-        <h1 className="text-xl font-bold text-gray-900">Statistiques</h1>
+        <h1 className="text-xl font-bold text-[#111]">Statistiques</h1>
         <p className="text-sm text-gray-400">75 jours · 3 membres</p>
       </div>
 
       <div className="px-4 pt-4 flex flex-col gap-4">
+
+        {/* Milestones */}
+        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+          <div className="px-4 py-3 border-b border-gray-50">
+            <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">
+              Jalons — 75 jours
+            </span>
+          </div>
+          <div className="divide-y divide-gray-50">
+            {MILESTONES.map((m, i) => {
+              const start = i === 0 ? 1 : MILESTONES[i - 1].end + 1
+              const isUnlocked = dayNumber >= m.end
+              const isCurrent  = dayNumber >= start && dayNumber < m.end
+              return (
+                <div key={m.label} className="flex items-center gap-3 px-4 py-3.5">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${
+                    isUnlocked ? 'bg-[#111]' : isCurrent ? 'border-2 border-gray-200' : 'bg-gray-100'
+                  }`}>
+                    {isUnlocked ? (
+                      <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    ) : isCurrent ? (
+                      <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: user.avatar_color }} />
+                    ) : (
+                      <svg className="w-3.5 h-3.5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                      </svg>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-sm font-semibold ${isUnlocked || isCurrent ? 'text-[#111]' : 'text-gray-300'}`}>
+                      {m.label}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      J{start}–{m.end === 75 ? 75 : m.end}
+                    </p>
+                  </div>
+                  <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                    isUnlocked ? 'bg-green-100 text-green-600'
+                    : isCurrent ? 'bg-gray-100 text-gray-500'
+                    : 'bg-gray-50 text-gray-300'
+                  }`}>
+                    {isUnlocked ? 'Débloqué' : isCurrent ? `J${dayNumber}` : 'Verrouillé'}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
         {/* Member performance */}
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           <div className="px-4 py-3 border-b border-gray-50">
-            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+            <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">
               Performance individuelle
             </span>
           </div>
           {members.map((member, i) => {
             const s = memberStats[member.id] ?? { streak: 0, perfectDays: 0 }
             return (
-              <div
-                key={member.id}
-                className={`flex items-center gap-3 px-4 py-4 ${i < members.length - 1 ? 'border-b border-gray-50' : ''}`}
-              >
-                <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white flex-shrink-0"
-                  style={{ backgroundColor: member.avatar_color }}
-                >
+              <div key={member.id} className={`flex items-center gap-3 px-4 py-4 ${i < members.length - 1 ? 'border-b border-gray-50' : ''}`}>
+                <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white flex-shrink-0" style={{ backgroundColor: member.avatar_color }}>
                   {member.name[0]}
                 </div>
-                <p className="flex-1 font-semibold text-gray-900 text-sm">{member.name}</p>
+                <p className="flex-1 font-semibold text-[#111] text-sm">{member.name}</p>
                 <div className="flex gap-5 text-right">
                   <div>
-                    <p className="text-xl font-bold text-gray-900">{s.perfectDays}</p>
+                    <p className="text-xl font-black text-[#111]">{s.perfectDays}</p>
                     <p className="text-[10px] text-gray-400 leading-tight">jours<br/>parfaits</p>
                   </div>
                   <div>
-                    <p className="text-xl font-bold text-gray-900">
-                      {s.streak > 0 ? '🔥' : ''}{s.streak}
+                    <p className="text-xl font-black text-[#111] flex items-center gap-1 justify-end">
+                      {s.streak > 0 && (
+                        <svg className="w-4 h-4 text-orange-400 inline" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2c0 0-5 5.5-5 10a5 5 0 0 0 10 0C17 7.5 12 2 12 2Z" />
+                        </svg>
+                      )}
+                      {s.streak}
                     </p>
                     <p className="text-[10px] text-gray-400 leading-tight">streak<br/>actuel</p>
                   </div>
@@ -140,31 +207,28 @@ export default function Stats({ user }) {
 
         {/* Group km */}
         <div className="bg-white rounded-2xl shadow-sm p-4">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
-            🏃 Pénalités groupe
+          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-4">
+            Pénalités groupe
           </p>
           <div className="grid grid-cols-3 gap-3 mb-4">
             <div className="bg-red-50 rounded-xl p-3 text-center">
-              <p className="text-2xl font-bold text-red-500">{kmStats.owed}</p>
+              <p className="text-2xl font-black text-red-500">{kmStats.owed}</p>
               <p className="text-xs text-gray-500 mt-0.5">km dus</p>
             </div>
             <div className="bg-green-50 rounded-xl p-3 text-center">
-              <p className="text-2xl font-bold text-green-500">{kmStats.run}</p>
+              <p className="text-2xl font-black text-green-500">{kmStats.run}</p>
               <p className="text-xs text-gray-500 mt-0.5">km courus</p>
             </div>
             <div className="bg-gray-50 rounded-xl p-3 text-center">
-              <p className="text-2xl font-bold text-gray-700">{kmRemaining}</p>
+              <p className="text-2xl font-black text-gray-700">{kmRemaining}</p>
               <p className="text-xs text-gray-500 mt-0.5">restants</p>
             </div>
           </div>
           <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-green-500 rounded-full transition-all duration-700"
-              style={{ width: `${kmPct}%` }}
-            />
+            <div className="h-full bg-green-500 rounded-full transition-all duration-700" style={{ width: `${kmPct}%` }} />
           </div>
           <p className="text-xs text-gray-400 text-center mt-2">
-            {kmStats.owed === 0 ? 'Aucune pénalité — parfait ! 🎉' : `${kmPct}% des pénalités rattrapées`}
+            {kmStats.owed === 0 ? 'Aucune pénalité' : `${kmPct}% des pénalités rattrapées`}
           </p>
         </div>
       </div>

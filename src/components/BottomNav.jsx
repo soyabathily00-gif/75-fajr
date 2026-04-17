@@ -5,35 +5,41 @@ import { supabase } from '../lib/supabase'
 const TABS = [
   {
     path: '/dashboard',
-    label: 'Ma journée',
-    icon: (
+    label: 'Journée',
+    icon: (active) => (
       <path strokeLinecap="round" strokeLinejoin="round"
-        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+        d={active
+          ? "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+          : "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"}
+      />
     ),
   },
   {
     path: '/groupe',
     label: 'Groupe',
-    icon: (
+    icon: () => (
       <path strokeLinecap="round" strokeLinejoin="round"
-        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
+      />
     ),
   },
   {
     path: '/penalites',
     label: 'Pénalités',
     badge: true,
-    icon: (
+    icon: () => (
       <path strokeLinecap="round" strokeLinejoin="round"
-        d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6H13l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+        d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6H13l-1-1H5a2 2 0 00-2 2zm9-13.5V9"
+      />
     ),
   },
   {
     path: '/stats',
     label: 'Stats',
-    icon: (
+    icon: () => (
       <path strokeLinecap="round" strokeLinejoin="round"
-        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+      />
     ),
   },
 ]
@@ -50,7 +56,7 @@ export default function BottomNav({ user }) {
         supabase.from('penalty_runs').select('km_run').eq('user_id', user.id),
       ])
       const owed = (penaltiesRes.data ?? []).reduce((s, p) => s + p.km_owed, 0)
-      const run = (runsRes.data ?? []).reduce((s, r) => s + r.km_run, 0)
+      const run  = (runsRes.data ?? []).reduce((s, r) => s + r.km_run, 0)
       setKmOwed(Math.max(0, owed - run))
     }
     loadKm()
@@ -64,10 +70,17 @@ export default function BottomNav({ user }) {
           <button
             key={tab.path}
             onClick={() => navigate(tab.path)}
-            className={`flex-1 flex flex-col items-center justify-center py-2.5 gap-0.5 transition-colors ${
-              active ? 'text-gray-900' : 'text-gray-400'
+            className={`flex-1 flex flex-col items-center justify-center py-2.5 gap-0.5 transition-all duration-200 active:scale-90 relative ${
+              active ? 'text-[#111]' : 'text-gray-400'
             }`}
           >
+            {/* Active indicator bar */}
+            {active && (
+              <span
+                className="absolute top-0 left-3 right-3 h-[2px] rounded-full animate-fade-in"
+                style={{ backgroundColor: user.avatar_color }}
+              />
+            )}
             <div className="relative">
               <svg
                 className="w-6 h-6"
@@ -76,7 +89,7 @@ export default function BottomNav({ user }) {
                 stroke={active ? user.avatar_color : 'currentColor'}
                 strokeWidth={active ? 2 : 1.5}
               >
-                {tab.icon}
+                {tab.icon(active)}
               </svg>
               {tab.badge && kmOwed > 0 && (
                 <span className="absolute -top-1 -right-2 min-w-[16px] h-4 bg-red-500 rounded-full text-white text-[9px] font-bold flex items-center justify-center px-0.5">
