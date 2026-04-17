@@ -1,16 +1,68 @@
-# React + Vite
+# 75 Fajr
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Mobile-first PWA for a 75-day discipline challenge. Three users track 14 daily rules, accumulate penalties for missed days, and log penalty runs.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React 19 + Vite
+- Tailwind CSS v3
+- Supabase (Postgres, Storage)
+- vite-plugin-pwa (installable)
 
-## React Compiler
+## 1. Supabase setup
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. Create a project at [supabase.com](https://supabase.com)
+2. Go to **SQL Editor** and run the schema from `supabase/schema.sql`
+3. In **Storage**, create a public bucket named `walk-photos`
+4. Copy your project URL and anon key from **Settings → API**
 
-## Expanding the ESLint configuration
+## 2. Local environment
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+cp .env.local.example .env.local
+```
+
+Edit `.env.local`:
+
+```
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+```
+
+## 3. Run locally
+
+```bash
+npm install
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) — login with PIN 1111, 2222, or 3333.
+
+## 4. Deploy to Vercel
+
+```bash
+npx vercel --prod
+```
+
+**After deploying**, add these two environment variables in the Vercel dashboard under **Settings → Environment Variables**:
+
+| Name | Value |
+|------|-------|
+| `VITE_SUPABASE_URL` | Your Supabase project URL |
+| `VITE_SUPABASE_ANON_KEY` | Your Supabase anon key |
+
+Then redeploy:
+
+```bash
+npx vercel --prod
+```
+
+## 5. Penalty Edge Function (optional)
+
+To auto-generate penalties at midnight, deploy the Edge Function:
+
+```bash
+supabase functions deploy check-penalties --project-ref your-project-ref
+```
+
+Then create a cron job in **Supabase → Edge Functions → check-penalties → Schedule**: `0 0 * * *`

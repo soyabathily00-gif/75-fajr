@@ -88,6 +88,14 @@ export default function Dashboard({ user, onLogout }) {
       return
     }
 
+    // Weekly rules are one-directional: click once to log today's session
+    // Clicking again on the same day does nothing (prevents 1→0 regression)
+    if (rule.type === 'weekly') {
+      if (currentlyDone) return
+      await upsertLog(rule, true, null)
+      return
+    }
+
     await upsertLog(rule, !currentlyDone, null)
   }
 
