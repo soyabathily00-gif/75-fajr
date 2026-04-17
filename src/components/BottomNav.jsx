@@ -80,7 +80,7 @@ export default function BottomNav({ user }) {
               </svg>
               {tab.badge && kmOwed > 0 && (
                 <span className="absolute -top-1 -right-2 min-w-[16px] h-4 bg-red-500 rounded-full text-white text-[9px] font-bold flex items-center justify-center px-0.5">
-                  {kmOwed > 99 ? '99+' : `${kmOwed}k`}
+                  {kmOwed > 99 ? '99+' : kmOwed}
                 </span>
               )}
             </div>
