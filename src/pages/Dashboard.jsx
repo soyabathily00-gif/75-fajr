@@ -155,7 +155,7 @@ export default function Dashboard({ user, onLogout }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-28">
+    <div className="min-h-screen bg-gray-50 pb-40">
       {/* Header */}
       <div className="bg-white px-5 pt-14 pb-5 shadow-sm">
         <div className="flex items-center justify-between gap-4">
@@ -235,7 +235,7 @@ export default function Dashboard({ user, onLogout }) {
       </div>
 
       {/* Sticky bottom CTA */}
-      <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 pt-4 bg-gradient-to-t from-gray-50 via-gray-50/95 to-transparent">
+      <div className="fixed bottom-16 left-0 right-0 px-4 pb-2 pt-6 bg-gradient-to-t from-gray-50 via-gray-50/95 to-transparent">
         <button
           onClick={handleDayComplete}
           disabled={!allDailyDone}
