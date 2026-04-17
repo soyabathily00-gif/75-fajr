@@ -73,9 +73,8 @@ export default function MemberDetailSheet({ member, logs, weeklyLogs, onClose })
                 <div className="divide-y divide-gray-100">
                   {rules.map(rule => {
                     const weekCount = weeklyLogs[rule.id] ?? 0
-                    const isWeeklyDone = rule.type === 'weekly' && (
-                      rule.inverse ? weekCount <= rule.target : weekCount >= rule.target
-                    )
+                    const isWeeklyDone = rule.type === 'weekly' && !rule.inverse && weekCount >= rule.target
+                    const isInverseExceeded = rule.inverse && weekCount > rule.target
                     const isDone = rule.type === 'daily'
                       ? (logs[rule.id]?.completed ?? false)
                       : isWeeklyDone
@@ -84,7 +83,9 @@ export default function MemberDetailSheet({ member, logs, weeklyLogs, onClose })
                       <div key={rule.id} className="flex items-center gap-3 py-2.5">
                         <div
                           className={`w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${
-                            isDone ? 'bg-green-500 border-green-500' : 'border-gray-300'
+                            isDone ? 'bg-green-500 border-green-500'
+                            : isInverseExceeded ? 'bg-red-400 border-red-400'
+                            : 'border-gray-300'
                           }`}
                         >
                           {isDone && (
@@ -92,13 +93,31 @@ export default function MemberDetailSheet({ member, logs, weeklyLogs, onClose })
                               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                             </svg>
                           )}
+                          {isInverseExceeded && (
+                            <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          )}
                         </div>
-                        <span className={`flex-1 text-sm leading-snug ${isDone ? 'line-through text-gray-400' : 'text-gray-700'}`}>
+                        <span className={`flex-1 text-sm leading-snug ${
+                          isDone ? 'line-through text-gray-400'
+                          : isInverseExceeded ? 'line-through text-red-400'
+                          : 'text-gray-700'
+                        }`}>
                           {rule.label}
                         </span>
-                        {rule.type === 'weekly' && (
+                        {rule.type === 'weekly' && !rule.inverse && (
                           <span className={`text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${
                             isWeeklyDone ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-500'
+                          }`}>
+                            {weekCount}/{rule.target}
+                          </span>
+                        )}
+                        {rule.inverse && (
+                          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${
+                            weekCount === 0 ? 'bg-green-50 text-green-600'
+                            : weekCount < rule.target ? 'bg-amber-100 text-amber-600'
+                            : 'bg-red-100 text-red-500'
                           }`}>
                             {weekCount}/{rule.target}
                           </span>

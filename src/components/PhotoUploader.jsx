@@ -49,14 +49,14 @@ export default function PhotoUploader({ rule, user, date, onComplete, onCancel }
             <img src={preview} className="w-full h-52 object-cover rounded-2xl" alt="preview" />
             <label className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-3 py-1.5 rounded-full cursor-pointer">
               Changer
-              <input type="file" accept="image/*" capture="environment" className="hidden" onChange={handleFileChange} />
+              <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
             </label>
           </div>
         ) : (
           <label className="flex flex-col items-center justify-center h-44 border-2 border-dashed border-gray-200 rounded-2xl cursor-pointer hover:border-gray-300 transition-colors bg-gray-50">
             <span className="text-4xl">📷</span>
             <span className="text-sm text-gray-400 mt-2">Appuyer pour ajouter une photo</span>
-            <input type="file" accept="image/*" capture="environment" className="hidden" onChange={handleFileChange} />
+            <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
           </label>
         )}
 

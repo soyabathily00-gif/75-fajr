@@ -187,6 +187,40 @@ export default function Group({ user }) {
         </div>
       </div>
 
+      {/* Walk photos of the day */}
+      {(() => {
+        const walkPhotos = members.flatMap(m => {
+          const mLogs = todayLogs[m.id] ?? {}
+          return ['R01', 'R13']
+            .map(id => mLogs[id]?.photo_url ? { url: mLogs[id].photo_url, member: m } : null)
+            .filter(Boolean)
+        })
+        if (walkPhotos.length === 0) return null
+        return (
+          <div className="px-4 pt-4">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-1 mb-2">
+              📸 Photos de marche du jour
+            </p>
+            <div className="flex flex-col gap-2">
+              {walkPhotos.map(({ url, member }, i) => (
+                <div key={i} className="relative rounded-2xl overflow-hidden shadow-sm">
+                  <img src={url} className="w-full h-52 object-cover" alt="marche" />
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent px-3 py-2 flex items-center gap-2">
+                    <div
+                      className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
+                      style={{ backgroundColor: member.avatar_color }}
+                    >
+                      {member.name[0]}
+                    </div>
+                    <span className="text-white text-xs font-medium">{member.name}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )
+      })()}
+
       {/* Weekly challenge */}
       <div className="px-4 pt-4">
         <div className="bg-white rounded-2xl p-4 shadow-sm">
