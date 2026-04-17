@@ -33,7 +33,7 @@ function getDayNumber() {
   return Math.max(1, Math.min(75, diff + 1))
 }
 
-export default function Dashboard({ user, onLogout }) {
+export default function Dashboard({ user, onLogout, dark, onToggleDark }) {
   const [logs, setLogs] = useState({})
   const [weeklyLogs, setWeeklyLogs] = useState({})
   const [loading, setLoading] = useState(true)
@@ -168,29 +168,34 @@ export default function Dashboard({ user, onLogout }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f5f5f7]">
-        <div className="w-8 h-8 border-4 border-gray-200 border-t-gray-600 rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-app-bg">
+        <div className="w-8 h-8 border-4 border-rim border-t-ink-2 rounded-full animate-spin" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f5f7] pb-40">
+    <div className="min-h-screen bg-app-bg pb-40">
       {/* Header */}
-      <div className="bg-white px-5 pt-14 pb-5 shadow-sm">
+      <div className="bg-surface px-5 pt-14 pb-5 shadow-sm">
         <div className="flex items-center justify-between gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-baseline gap-1.5">
-              <span className="text-5xl font-black text-[#111] leading-none">{dayNumber}</span>
-              <span className="text-xl text-gray-300 font-light">/ 75</span>
+              <span className="text-5xl font-black text-ink leading-none">{dayNumber}</span>
+              <span className="text-xl text-ink-3 font-light">/ 75</span>
             </div>
-            <p className="text-sm text-gray-400 mt-1 capitalize truncate">{dateLabel}</p>
+            <p className="text-sm text-ink-2 mt-1 capitalize truncate">{dateLabel}</p>
           </div>
 
           <div className="flex flex-col items-center flex-shrink-0">
             <div className="relative w-20 h-20">
               <svg viewBox="0 0 100 100" width="80" height="80" className="-rotate-90">
-                <circle cx="50" cy="50" r={RADIUS} fill="none" stroke="#f3f4f6" strokeWidth="9" />
+                <circle
+                  cx="50" cy="50" r={RADIUS}
+                  fill="none"
+                  strokeWidth="9"
+                  style={{ stroke: 'rgb(var(--rim))' }}
+                />
                 <circle
                   cx="50" cy="50" r={RADIUS}
                   fill="none"
@@ -203,24 +208,42 @@ export default function Dashboard({ user, onLogout }) {
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-lg font-black text-[#111] leading-none">{dailyCompleted}</span>
-                <span className="text-[10px] text-gray-400 leading-none mt-0.5">/{DAILY_RULES.length}</span>
+                <span className="text-lg font-black text-ink leading-none">{dailyCompleted}</span>
+                <span className="text-[10px] text-ink-3 leading-none mt-0.5">/{DAILY_RULES.length}</span>
               </div>
             </div>
           </div>
 
-          <button
-            onClick={onLogout}
-            className="w-11 h-11 rounded-full flex-shrink-0 flex items-center justify-center shadow-sm active:scale-90 transition-transform"
-            style={{ backgroundColor: user.avatar_color }}
-          >
-            <span className="text-white font-bold text-base">{user.name[0]}</span>
-          </button>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Dark mode toggle */}
+            <button
+              onClick={onToggleDark}
+              className="w-9 h-9 rounded-full flex items-center justify-center bg-surface-2 text-ink-2 active:scale-90 transition-transform"
+              aria-label="Toggle dark mode"
+            >
+              {dark ? (
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                </svg>
+              )}
+            </button>
+            <button
+              onClick={onLogout}
+              className="w-11 h-11 rounded-full flex items-center justify-center shadow-sm active:scale-90 transition-transform"
+              style={{ backgroundColor: user.avatar_color }}
+            >
+              <span className="text-white font-bold text-base">{user.name[0]}</span>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Milestone bar */}
-      <div className="bg-white mt-3 mx-4 rounded-2xl shadow-sm">
+      <div className="bg-surface mt-3 mx-4 rounded-2xl shadow-sm">
         <MilestoneBar dayNumber={dayNumber} avatarColor={user.avatar_color} />
       </div>
 
@@ -230,18 +253,18 @@ export default function Dashboard({ user, onLogout }) {
           const rules = getRulesByCategory(category)
           const iconPath = CATEGORY_ICON[category]
           return (
-            <div key={category} className="bg-white rounded-2xl px-4 pt-3 pb-1 shadow-sm">
-              <div className="flex items-center gap-2 pb-2 border-b border-gray-50">
+            <div key={category} className="bg-surface rounded-2xl px-4 pt-3 pb-1 shadow-sm">
+              <div className="flex items-center gap-2 pb-2 border-b border-rim">
                 {iconPath && (
-                  <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <svg className="w-4 h-4 text-ink-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d={iconPath} />
                   </svg>
                 )}
-                <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">
+                <span className="text-[10px] font-semibold text-ink-3 uppercase tracking-widest">
                   {category}
                 </span>
               </div>
-              <div className="divide-y divide-gray-50">
+              <div className="divide-y divide-rim">
                 {rules.map(rule => (
                   <ChecklistItem
                     key={rule.id}
@@ -262,16 +285,16 @@ export default function Dashboard({ user, onLogout }) {
       </div>
 
       {/* Sticky bottom CTA */}
-      <div className="fixed bottom-16 left-0 right-0 px-4 pb-2 pt-8 bg-gradient-to-t from-[#f5f5f7] via-[#f5f5f7]/95 to-transparent">
+      <div className="fixed bottom-16 left-0 right-0 px-4 pb-2 pt-8 bg-gradient-to-t from-app-bg via-app-bg/95 to-transparent">
         <button
           onClick={handleDayComplete}
           disabled={!allDailyDone}
           className={`w-full py-4 rounded-2xl font-semibold text-base transition-all duration-300 ${
             allDailyDone && !celebrated
-              ? 'bg-[#111] text-white shadow-lg active:scale-[0.98]'
+              ? 'bg-ink text-surface shadow-lg active:scale-[0.98]'
               : allDailyDone && celebrated
               ? 'bg-green-500 text-white cursor-default'
-              : 'bg-gray-100 text-gray-300 cursor-not-allowed'
+              : 'bg-surface-2 text-ink-3 cursor-not-allowed'
           }`}
         >
           {celebrated

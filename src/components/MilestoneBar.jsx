@@ -6,8 +6,6 @@ const MILESTONES = [
 ]
 
 export default function MilestoneBar({ dayNumber, avatarColor }) {
-  const pct = Math.min(100, ((dayNumber - 1) / 74) * 100)
-
   return (
     <div className="px-5 pt-4 pb-1">
       {/* Track */}
@@ -28,7 +26,7 @@ export default function MilestoneBar({ dayNumber, avatarColor }) {
           return (
             <div
               key={m.phase}
-              className="relative h-1.5 rounded-full bg-gray-100 overflow-hidden"
+              className="relative h-1.5 rounded-full bg-surface-2 overflow-hidden"
               style={{ width: `${segPct}%` }}
             >
               <div
@@ -61,10 +59,10 @@ export default function MilestoneBar({ dayNumber, avatarColor }) {
             >
               <span className={`text-[9px] font-semibold uppercase tracking-wide truncate ${
                 isCurrent
-                  ? 'text-gray-900'
+                  ? 'text-ink'
                   : isUnlocked
-                  ? 'text-gray-400'
-                  : 'text-gray-300'
+                  ? 'text-ink-2'
+                  : 'text-ink-3'
               }`}>
                 {m.label}
               </span>
@@ -82,9 +80,9 @@ export default function MilestoneBar({ dayNumber, avatarColor }) {
       {MILESTONES.find(m => m.end === dayNumber) && (
         <div
           className="mt-3 px-4 py-3 rounded-2xl animate-slide-up"
-          style={{ backgroundColor: `${avatarColor}15` }}
+          style={{ backgroundColor: `${avatarColor}18` }}
         >
-          <p className="text-xs font-semibold text-gray-900">
+          <p className="text-xs font-semibold text-ink">
             {MILESTONES.find(m => m.end === dayNumber)?.reward}
           </p>
         </div>

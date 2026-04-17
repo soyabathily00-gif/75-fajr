@@ -51,23 +51,23 @@ export default function Login({ onLogin }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="w-8 h-8 border-4 border-gray-200 border-t-gray-600 rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-app-bg">
+        <div className="w-8 h-8 border-4 border-rim border-t-ink-2 rounded-full animate-spin" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-6 py-12">
+    <div className="min-h-screen bg-app-bg flex flex-col items-center justify-center px-6 py-12">
       {!selectedUser ? (
         <div className="flex flex-col items-center gap-10 w-full">
 
           {/* Header */}
           <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900">
+            <h1 className="text-4xl font-bold tracking-tight text-ink">
               75 Fajr
             </h1>
-            <p className="mt-2 text-gray-400 text-sm tracking-wide uppercase">
+            <p className="mt-2 text-ink-3 text-sm tracking-wide uppercase">
               Who's checking in?
             </p>
           </div>
@@ -80,8 +80,8 @@ export default function Login({ onLogin }) {
                 onClick={() => setSelectedUser(user)}
                 className="
                   flex flex-col items-center gap-3 py-6 px-5
-                  bg-white rounded-3xl shadow-sm
-                  hover:shadow-md active:scale-95
+                  bg-surface rounded-3xl shadow-sm
+                  active:scale-95
                   transition-all duration-150 w-28
                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
                   select-none
@@ -95,11 +95,11 @@ export default function Login({ onLogin }) {
                 >
                   {user.name[0]}
                 </div>
-                <span className="text-sm font-semibold text-gray-700">
+                <span className="text-sm font-semibold text-ink">
                   {user.name}
                 </span>
                 {/* Wake time badge */}
-                <span className="text-xs text-gray-400 bg-gray-100 rounded-full px-2 py-0.5">
+                <span className="text-xs text-ink-2 bg-surface-2 rounded-full px-2 py-0.5">
                   {user.wake_time}
                 </span>
               </button>

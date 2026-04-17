@@ -64,29 +64,29 @@ export default function Penalties({ user }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f5f5f7]">
-        <div className="w-8 h-8 border-4 border-gray-200 border-t-gray-600 rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-app-bg">
+        <div className="w-8 h-8 border-4 border-rim border-t-ink-2 rounded-full animate-spin" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f5f7] pb-24">
-      <div className="bg-white px-5 pt-14 pb-4 shadow-sm">
-        <h1 className="text-xl font-bold text-[#111]">Pénalités</h1>
-        <p className="text-sm text-gray-400">
+    <div className="min-h-screen bg-app-bg pb-24">
+      <div className="bg-surface px-5 pt-14 pb-4 shadow-sm">
+        <h1 className="text-xl font-bold text-ink">Pénalités</h1>
+        <p className="text-sm text-ink-2">
           {remaining > 0 ? `${remaining} km restants` : 'Tout est rattrapé'}
         </p>
       </div>
 
       <div className="px-4 pt-4 flex flex-col gap-4">
         {totalOwed > 0 && (
-          <div className="bg-white rounded-2xl p-4 shadow-sm">
+          <div className="bg-surface rounded-2xl p-4 shadow-sm">
             <div className="flex justify-between mb-2">
-              <span className="text-xs text-gray-400 font-medium">Ma progression</span>
-              <span className="text-xs font-bold text-[#111]">{totalRun}/{totalOwed} km</span>
+              <span className="text-xs text-ink-2 font-medium">Ma progression</span>
+              <span className="text-xs font-bold text-ink">{totalRun}/{totalOwed} km</span>
             </div>
-            <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div className="w-full h-2 bg-surface-2 rounded-full overflow-hidden">
               <div
                 className="h-full bg-green-500 rounded-full transition-all duration-500"
                 style={{ width: `${Math.min(100, totalOwed > 0 ? (totalRun / totalOwed) * 100 : 100)}%` }}
@@ -108,7 +108,7 @@ export default function Penalties({ user }) {
 
         {done.length > 0 && (
           <div>
-            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest px-1 mb-2">
+            <p className="text-[10px] font-semibold text-ink-3 uppercase tracking-widest px-1 mb-2">
               Rattrapées
             </p>
             <div className="flex flex-col gap-2">
@@ -119,15 +119,15 @@ export default function Penalties({ user }) {
 
         {penalties.length === 0 && (
           <div className="text-center py-20">
-            <p className="text-gray-700 font-semibold text-lg">Aucune pénalité</p>
-            <p className="text-gray-400 text-sm mt-1">Continuez comme ça</p>
+            <p className="text-ink font-semibold text-lg">Aucune pénalité</p>
+            <p className="text-ink-2 text-sm mt-1">Continuez comme ça</p>
           </div>
         )}
 
         {members.length > 0 && penalties.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-50">
-              <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">
+          <div className="bg-surface rounded-2xl shadow-sm overflow-hidden">
+            <div className="px-4 py-3 border-b border-rim">
+              <span className="text-[10px] font-semibold text-ink-3 uppercase tracking-widest">
                 Classement groupe
               </span>
             </div>
@@ -137,20 +137,24 @@ export default function Penalties({ user }) {
               const left = Math.max(0, owed - run)
               const pct  = owed > 0 ? Math.min(100, (run / owed) * 100) : 100
               return (
-                <div key={m.id} className={`px-4 py-3 flex items-center gap-3 ${i < members.length - 1 ? 'border-b border-gray-50' : ''}`}>
+                <div key={m.id} className={`px-4 py-3 flex items-center gap-3 ${i < members.length - 1 ? 'border-b border-rim' : ''}`}>
                   <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0" style={{ backgroundColor: m.avatar_color }}>
                     {m.name[0]}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between mb-1">
-                      <p className="text-sm font-semibold text-[#111]">{m.name}</p>
-                      <p className="text-xs text-gray-400">{run}/{owed} km</p>
+                      <p className="text-sm font-semibold text-ink">{m.name}</p>
+                      <p className="text-xs text-ink-2">{run}/{owed} km</p>
                     </div>
-                    <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="w-full h-1.5 bg-surface-2 rounded-full overflow-hidden">
                       <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pct}%`, backgroundColor: left === 0 ? '#22c55e' : m.avatar_color }} />
                     </div>
                   </div>
-                  {left === 0 && owed > 0 && <span className="text-green-500 text-xs font-bold flex-shrink-0">✓</span>}
+                  {left === 0 && owed > 0 && (
+                    <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
                   {left > 0 && <span className="text-red-400 text-xs font-bold flex-shrink-0">{left}km</span>}
                 </div>
               )

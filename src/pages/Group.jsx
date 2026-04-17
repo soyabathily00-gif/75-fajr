@@ -150,8 +150,8 @@ export default function Group({ user }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="w-8 h-8 border-4 border-gray-200 border-t-gray-600 rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-app-bg">
+        <div className="w-8 h-8 border-4 border-rim border-t-ink-2 rounded-full animate-spin" />
       </div>
     )
   }
@@ -159,11 +159,11 @@ export default function Group({ user }) {
   const dateLabel = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
 
   return (
-    <div className="min-h-screen bg-[#f5f5f7] pb-24">
+    <div className="min-h-screen bg-app-bg pb-24">
       {/* Header */}
-      <div className="bg-white px-5 pt-14 pb-4 shadow-sm">
-        <h1 className="text-xl font-bold text-gray-900">Groupe</h1>
-        <p className="text-sm text-gray-400 capitalize">{dateLabel}</p>
+      <div className="bg-surface px-5 pt-14 pb-4 shadow-sm">
+        <h1 className="text-xl font-bold text-ink">Groupe</h1>
+        <p className="text-sm text-ink-2 capitalize">{dateLabel}</p>
       </div>
 
       {/* Member cards */}
@@ -198,7 +198,7 @@ export default function Group({ user }) {
         if (walkPhotos.length === 0) return null
         return (
           <div className="px-4 pt-4">
-            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest px-1 mb-2">
+            <p className="text-[10px] font-semibold text-ink-3 uppercase tracking-widest px-1 mb-2">
               Photos de marche du jour
             </p>
             <div className="flex flex-col gap-2">
@@ -223,20 +223,20 @@ export default function Group({ user }) {
 
       {/* Weekly challenge */}
       <div className="px-4 pt-4">
-        <div className="bg-white rounded-2xl p-4 shadow-sm">
+        <div className="bg-surface rounded-2xl p-4 shadow-sm">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <svg className="w-4 h-4 text-ink-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 0 1-.982-3.172M9.497 14.25a7.454 7.454 0 0 0 .981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 0 0 7.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 0 0 2.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 0 1 2.916.52 6.003 6.003 0 0 1-5.395 4.972m0 0a6.726 6.726 0 0 1-2.749 1.35m0 0a6.772 6.772 0 0 1-3.044 0" />
               </svg>
-              <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">
+              <span className="text-[10px] font-semibold text-ink-3 uppercase tracking-widest">
                 Défi de la semaine
               </span>
             </div>
             {user.name === 'Souleman' && !editingChallenge && (
               <button
                 onClick={() => setEditingChallenge(true)}
-                className="text-xs text-gray-500 font-medium px-2.5 py-1 rounded-lg bg-gray-100 active:scale-95 transition-transform flex items-center gap-1"
+                className="text-xs text-ink-2 font-medium px-2.5 py-1 rounded-lg bg-surface-2 active:scale-95 transition-transform flex items-center gap-1"
               >
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z" />
@@ -252,30 +252,30 @@ export default function Group({ user }) {
                 value={challengeText}
                 onChange={e => setChallengeText(e.target.value)}
                 placeholder="Décris le défi de la semaine..."
-                className="w-full text-sm text-gray-700 p-3 border border-gray-200 rounded-xl resize-none focus:outline-none focus:border-gray-400"
+                className="w-full text-sm text-ink placeholder-ink-3 p-3 border border-rim bg-surface-2 rounded-xl resize-none focus:outline-none focus:border-ink-3"
                 rows={3}
                 autoFocus
               />
               <div className="flex gap-2">
                 <button
                   onClick={() => { setEditingChallenge(false); setChallengeText(challenge?.description ?? '') }}
-                  className="flex-1 py-2.5 text-sm text-gray-500 border border-gray-200 rounded-xl active:scale-95 transition-transform"
+                  className="flex-1 py-2.5 text-sm text-ink-2 border border-rim rounded-xl active:scale-95 transition-transform"
                 >
                   Annuler
                 </button>
                 <button
                   onClick={saveChallenge}
                   disabled={!challengeText.trim()}
-                  className="flex-1 py-2.5 text-sm text-white bg-gray-900 rounded-xl disabled:opacity-30 active:scale-95 transition-transform"
+                  className="flex-1 py-2.5 text-sm text-surface bg-ink rounded-xl disabled:opacity-30 active:scale-95 transition-transform"
                 >
                   Enregistrer
                 </button>
               </div>
             </div>
           ) : challenge ? (
-            <p className="text-gray-700 text-sm leading-relaxed">{challenge.description}</p>
+            <p className="text-ink text-sm leading-relaxed">{challenge.description}</p>
           ) : (
-            <p className="text-gray-400 text-sm italic">
+            <p className="text-ink-3 text-sm italic">
               {user.name === 'Souleman'
                 ? 'Clique sur "Modifier" pour définir le défi.'
                 : 'Aucun défi défini pour cette semaine.'}
