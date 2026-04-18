@@ -38,10 +38,10 @@ export default function PhotoUploader({ rule, user, date, onComplete, onCancel }
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-end justify-center z-50 p-4 pb-8">
-      <div className="bg-white rounded-3xl w-full max-w-sm p-6 flex flex-col gap-5">
+      <div className="bg-surface rounded-3xl w-full max-w-sm p-6 flex flex-col gap-5">
         <div>
-          <h3 className="font-bold text-gray-900 text-lg">📸 Photo requise</h3>
-          <p className="text-sm text-gray-500 mt-1">{rule.label}</p>
+          <h3 className="font-bold text-ink text-lg">Photo requise</h3>
+          <p className="text-sm text-ink-2 mt-1">{rule.label}</p>
         </div>
 
         {preview ? (
@@ -53,9 +53,12 @@ export default function PhotoUploader({ rule, user, date, onComplete, onCancel }
             </label>
           </div>
         ) : (
-          <label className="flex flex-col items-center justify-center h-44 border-2 border-dashed border-gray-200 rounded-2xl cursor-pointer hover:border-gray-300 transition-colors bg-gray-50">
-            <span className="text-4xl">📷</span>
-            <span className="text-sm text-gray-400 mt-2">Appuyer pour ajouter une photo</span>
+          <label className="flex flex-col items-center justify-center h-44 border-2 border-dashed border-rim rounded-2xl cursor-pointer bg-surface-2">
+            <svg className="w-10 h-10 text-ink-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
+            </svg>
+            <span className="text-sm text-ink-2 mt-2">Appuyer pour ajouter une photo</span>
             <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
           </label>
         )}
@@ -65,14 +68,14 @@ export default function PhotoUploader({ rule, user, date, onComplete, onCancel }
         <div className="flex gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 py-3.5 rounded-2xl border border-gray-200 text-gray-600 text-sm font-medium active:scale-95 transition-transform"
+            className="flex-1 py-3.5 rounded-2xl border border-rim text-ink-2 text-sm font-medium active:scale-95 transition-transform"
           >
             Annuler
           </button>
           <button
             onClick={handleUpload}
             disabled={!file || uploading}
-            className="flex-1 py-3.5 rounded-2xl bg-gray-900 text-white text-sm font-medium disabled:opacity-30 active:scale-95 transition-transform"
+            className="flex-1 py-3.5 rounded-2xl bg-ink text-surface text-sm font-medium disabled:opacity-30 active:scale-95 transition-transform"
           >
             {uploading ? 'Upload...' : 'Confirmer'}
           </button>

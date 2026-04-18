@@ -1,3 +1,36 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --app-bg:    245 245 247;
+    --surface:   255 255 255;
+    --surface-2: 248 248 248;
+    --ink:       17 17 17;
+    --ink-2:     102 102 102;
+    --ink-3:     180 180 180;
+    --rim:       238 238 238;
+  }
+  .dark {
+    --app-bg:    10 10 10;
+    --surface:   28 28 30;
+    --surface-2: 44 44 46;
+    --ink:       255 255 255;
+    --ink-2:     152 152 157;
+    --ink-3:     99 99 102;
+    --rim:       56 56 58;
+  }
+}
+
+@layer components {
+  .dark .shadow-sm {
+    box-shadow: 0 0 0 1px rgb(var(--rim));
+  }
+  .dark .shadow-md {
+    box-shadow: 0 0 0 1px rgb(var(--rim)), 0 4px 16px rgba(0, 0, 0, 0.5);
+  }
+  .dark .shadow-lg {
+    box-shadow: 0 0 0 1px rgb(var(--rim)), 0 8px 32px rgba(0, 0, 0, 0.6);
+  }
+}

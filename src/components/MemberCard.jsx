@@ -5,22 +5,22 @@ export default function MemberCard({ member, todayCount, totalDaily, streak, isA
   const pct        = totalDaily > 0 ? todayCount / totalDaily : 0
 
   const cardCls = isComplete
-    ? 'bg-green-50 border-green-100'
+    ? 'bg-green-50 border-green-100 dark:bg-green-900/20 dark:border-green-900/40'
     : inProgress
-    ? 'bg-amber-50 border-amber-100'
+    ? 'bg-amber-50 border-amber-100 dark:bg-amber-900/20 dark:border-amber-900/40'
     : isLate
-    ? 'bg-red-50 border-red-100'
-    : 'bg-white border-gray-100'
+    ? 'bg-red-50 border-red-100 dark:bg-red-900/20 dark:border-red-900/40'
+    : 'bg-surface border-rim'
 
-  const countCls = isComplete ? 'text-green-600'
-    : inProgress ? 'text-amber-600'
+  const countCls = isComplete ? 'text-green-600 dark:text-green-400'
+    : inProgress ? 'text-amber-600 dark:text-amber-400'
     : isLate ? 'text-red-400'
-    : 'text-gray-400'
+    : 'text-ink-3'
 
   const barCls = isComplete ? 'bg-green-500'
     : inProgress ? 'bg-amber-400'
     : isLate ? 'bg-red-300'
-    : 'bg-gray-200'
+    : 'bg-rim'
 
   return (
     <button
@@ -35,11 +35,11 @@ export default function MemberCard({ member, todayCount, totalDaily, streak, isA
       </div>
 
       <div className="text-center">
-        <p className="font-semibold text-[#111] text-sm leading-tight">{member.name}</p>
+        <p className="font-semibold text-ink text-sm leading-tight">{member.name}</p>
         <p className={`text-xs font-medium mt-0.5 ${countCls}`}>{todayCount}/{totalDaily}</p>
       </div>
 
-      <div className="w-full h-1 bg-black/8 rounded-full overflow-hidden">
+      <div className="w-full h-1 bg-ink/10 rounded-full overflow-hidden">
         <div
           className={`h-full rounded-full transition-all duration-500 ${barCls}`}
           style={{ width: `${pct * 100}%` }}
@@ -53,10 +53,10 @@ export default function MemberCard({ member, todayCount, totalDaily, streak, isA
             <svg className="w-3 h-3 text-orange-400" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2c0 0-5 5.5-5 10a5 5 0 0 0 10 0C17 7.5 12 2 12 2Z" />
             </svg>
-            <span className="font-semibold text-gray-600">{streak}j</span>
+            <span className="font-semibold text-ink-2">{streak}j</span>
           </>
         ) : (
-          <span className="text-gray-300">0j</span>
+          <span className="text-ink-3">0j</span>
         )}
       </div>
     </button>

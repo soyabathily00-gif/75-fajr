@@ -39,7 +39,7 @@ export default function PinPad({ user, onComplete, onBack, error, shaking }) {
         >
           {user.name[0]}
         </div>
-        <p className="text-gray-700 font-semibold text-base">{user.name}</p>
+        <p className="text-ink font-semibold text-base">{user.name}</p>
       </div>
 
       {/* PIN dots */}
@@ -50,8 +50,8 @@ export default function PinPad({ user, onComplete, onBack, error, shaking }) {
               key={i}
               className={`w-3.5 h-3.5 rounded-full border-2 transition-all duration-150 ${
                 i < pin.length
-                  ? 'bg-gray-800 border-gray-800 scale-110'
-                  : 'bg-transparent border-gray-300'
+                  ? 'bg-ink border-ink scale-110'
+                  : 'bg-transparent border-rim'
               }`}
             />
           ))}
@@ -79,10 +79,10 @@ export default function PinPad({ user, onComplete, onBack, error, shaking }) {
               className={`
                 flex items-center justify-center rounded-2xl
                 text-xl font-medium select-none
-                bg-white shadow-sm text-gray-800
+                bg-surface shadow-sm text-ink
                 active:scale-90 active:shadow-none
                 transition-transform duration-75
-                ${key === '⌫' ? 'text-gray-500' : ''}
+                ${key === '⌫' ? 'text-ink-2' : ''}
               `}
               style={{ aspectRatio: '1' }}
             >
@@ -99,7 +99,7 @@ export default function PinPad({ user, onComplete, onBack, error, shaking }) {
       {/* Back */}
       <button
         onClick={onBack}
-        className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+        className="text-sm text-ink-2 transition-colors"
       >
         ← Back
       </button>
