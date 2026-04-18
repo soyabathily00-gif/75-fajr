@@ -11,16 +11,19 @@ const RADIUS = 42
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS
 const START_DATE_KEY = '75fajr_start_date'
 
+function localDate(d = new Date()) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
+}
+
 function getToday() {
-  return new Date().toISOString().split('T')[0]
+  return localDate()
 }
 
 function getWeekStart() {
   const d = new Date()
   const day = d.getDay()
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1)
-  d.setDate(diff)
-  return d.toISOString().split('T')[0]
+  d.setDate(d.getDate() - day + (day === 0 ? -6 : 1))
+  return localDate(d)
 }
 
 function getDayNumber() {
