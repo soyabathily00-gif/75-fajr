@@ -12,8 +12,12 @@ const MILESTONES = [
   { label: 'Victoire',  end: 75 },
 ]
 
+function localDate(d = new Date()) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
+}
+
 function getToday() {
-  return new Date().toISOString().split('T')[0]
+  return localDate()
 }
 
 function getDayNumber() {
@@ -37,7 +41,7 @@ function computeStreak(logs) {
   if (!full(today)) d.setDate(d.getDate() - 1)
   let streak = 0
   while (true) {
-    const ds = d.toISOString().split('T')[0]
+    const ds = localDate(d)
     if (full(ds)) { streak++; d.setDate(d.getDate() - 1) } else break
   }
   return streak
@@ -67,7 +71,7 @@ export default function Stats({ user }) {
   async function loadStats() {
     const since = new Date()
     since.setDate(since.getDate() - 75)
-    const sinceDate = since.toISOString().split('T')[0]
+    const sinceDate = localDate(since)
 
     const [usersRes, logsRes, penaltiesRes, runsRes] = await Promise.all([
       supabase.from('users').select('id, name, avatar_color'),

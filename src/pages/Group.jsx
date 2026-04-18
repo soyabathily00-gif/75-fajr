@@ -4,15 +4,19 @@ import { DAILY_RULES } from '../lib/rules'
 import MemberCard from '../components/MemberCard'
 import MemberDetailSheet from '../components/MemberDetailSheet'
 
+function localDate(d = new Date()) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
+}
+
 function getToday() {
-  return new Date().toISOString().split('T')[0]
+  return localDate()
 }
 
 function getWeekStart() {
   const d = new Date()
   const day = d.getDay()
   d.setDate(d.getDate() - day + (day === 0 ? -6 : 1))
-  return d.toISOString().split('T')[0]
+  return localDate(d)
 }
 
 function getISOWeek() {
@@ -44,7 +48,7 @@ function computeStreak(completedLogs) {
 
   let streak = 0
   while (true) {
-    const ds = d.toISOString().split('T')[0]
+    const ds = localDate(d)
     if (isFullDay(ds)) { streak++; d.setDate(d.getDate() - 1) }
     else break
   }
@@ -97,7 +101,7 @@ export default function Group({ user }) {
     const { week, year } = getISOWeek()
     const since = new Date()
     since.setDate(since.getDate() - 75)
-    const streakSince = since.toISOString().split('T')[0]
+    const streakSince = localDate(since)
 
     const [usersRes, todayRes, historyRes, challengeRes] = await Promise.all([
       supabase.from('users').select('id, name, avatar_color, wake_time'),
