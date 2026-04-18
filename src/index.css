@@ -3,6 +3,12 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    background-color: rgb(var(--surface));
+  }
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
   :root {
     --app-bg:    245 245 247;
     --surface:   255 255 255;
