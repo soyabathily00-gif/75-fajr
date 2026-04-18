@@ -63,7 +63,8 @@ export default function BottomNav({ user }) {
   }, [user.id])
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-30 bg-surface/90 backdrop-blur-xl border-t border-rim flex">
+    <div className="fixed bottom-0 left-0 right-0 z-30 bg-surface/90 backdrop-blur-xl border-t border-rim flex flex-col" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+      <div className="flex">
       {TABS.map(tab => {
         const active = location.pathname === tab.path
         return (
@@ -106,6 +107,7 @@ export default function BottomNav({ user }) {
           </button>
         )
       })}
+      </div>
     </div>
   )
 }
