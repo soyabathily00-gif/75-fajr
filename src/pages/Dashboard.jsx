@@ -9,7 +9,7 @@ import PersonalChallenges from '../components/PersonalChallenges'
 
 const RADIUS = 42
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS
-const CHALLENGE_START = '2026-04-21'
+const CHALLENGE_START = '2026-04-20'
 
 function localDate(d = new Date()) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`

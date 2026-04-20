@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase'
 import { DAILY_RULES } from '../lib/rules'
 
 const ORDER = ['Soya', 'Imran', 'Souleman']
-const CHALLENGE_START = '2026-04-21'
+const CHALLENGE_START = '2026-04-20'
 
 const MILESTONES = [
   { label: 'Fondation', end: 19 },
