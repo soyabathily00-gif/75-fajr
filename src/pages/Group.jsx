@@ -195,7 +195,7 @@ export default function Group({ user }) {
       {(() => {
         const walkPhotos = members.flatMap(m => {
           const mLogs = todayLogs[m.id] ?? {}
-          return ['R01', 'R13']
+          return ['R13']
             .map(id => mLogs[id]?.photo_url ? { url: mLogs[id].photo_url, member: m } : null)
             .filter(Boolean)
         })

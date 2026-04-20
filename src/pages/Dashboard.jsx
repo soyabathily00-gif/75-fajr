@@ -9,7 +9,7 @@ import PersonalChallenges from '../components/PersonalChallenges'
 
 const RADIUS = 42
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS
-const START_DATE_KEY = '75fajr_start_date'
+const CHALLENGE_START = '2026-04-21'
 
 function localDate(d = new Date()) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
@@ -27,12 +27,7 @@ function getWeekStart() {
 }
 
 function getDayNumber() {
-  let start = localStorage.getItem(START_DATE_KEY)
-  if (!start) {
-    start = getToday()
-    localStorage.setItem(START_DATE_KEY, start)
-  }
-  const diff = Math.floor((new Date(getToday()) - new Date(start)) / 86400000)
+  const diff = Math.floor((new Date(getToday()) - new Date(CHALLENGE_START)) / 86400000)
   return Math.max(1, Math.min(75, diff + 1))
 }
 

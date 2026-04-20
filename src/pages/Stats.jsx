@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase'
 import { DAILY_RULES } from '../lib/rules'
 
 const ORDER = ['Soya', 'Imran', 'Souleman']
-const START_DATE_KEY = '75fajr_start_date'
+const CHALLENGE_START = '2026-04-21'
 
 const MILESTONES = [
   { label: 'Fondation', end: 19 },
@@ -21,9 +21,7 @@ function getToday() {
 }
 
 function getDayNumber() {
-  const start = localStorage.getItem(START_DATE_KEY)
-  if (!start) return 1
-  const diff = Math.floor((new Date(getToday()) - new Date(start)) / 86400000)
+  const diff = Math.floor((new Date(getToday()) - new Date(CHALLENGE_START)) / 86400000)
   return Math.max(1, Math.min(75, diff + 1))
 }
 
