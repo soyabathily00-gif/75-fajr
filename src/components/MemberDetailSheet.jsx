@@ -2,7 +2,7 @@ import { CATEGORIES, CATEGORY_ICON, DAILY_RULES, getRulesByCategory } from '../l
 
 export default function MemberDetailSheet({ member, logs, weeklyLogs, onClose }) {
   const dailyDone = DAILY_RULES.filter(r => logs[r.id]?.completed).length
-  const photos = ['R01', 'R13'].map(id => logs[id]?.photo_url).filter(Boolean)
+  const photos = ['R13'].map(id => logs[id]?.photo_url).filter(Boolean)
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col justify-end">

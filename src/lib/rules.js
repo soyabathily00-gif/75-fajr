@@ -1,5 +1,5 @@
 export const RULES = [
-  { id: 'R01', category: 'Fitness',            label: '20 min de marche — sans musique',  type: 'daily',  needsPhoto: true },
+  { id: 'R01', category: 'Fitness',            label: '20 min de marche — sans musique',  type: 'daily' },
   { id: 'R02', category: 'Fitness',            label: '4 séances de sport cette semaine', type: 'weekly', target: 4 },
   { id: 'R03', category: 'Nutrition',          label: "3 litres d'eau aujourd'hui",        type: 'daily' },
   { id: 'R04', category: 'Nutrition',          label: 'Max 2 fast-foods cette semaine',   type: 'weekly', target: 2, inverse: true },
