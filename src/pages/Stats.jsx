@@ -16,12 +16,19 @@ function localDate(d = new Date()) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
 }
 
-function getToday() {
-  return localDate()
+function getFajrDate() {
+  const now = new Date()
+  const h = now.getHours(), m = now.getMinutes()
+  if (h < 4 || (h === 4 && m < 59)) {
+    const prev = new Date(now)
+    prev.setDate(prev.getDate() - 1)
+    return localDate(prev)
+  }
+  return localDate(now)
 }
 
 function getDayNumber() {
-  const diff = Math.floor((new Date(getToday()) - new Date(CHALLENGE_START)) / 86400000)
+  const diff = Math.floor((new Date(getFajrDate()) - new Date(CHALLENGE_START)) / 86400000)
   return Math.max(1, Math.min(75, diff + 1))
 }
 
@@ -34,8 +41,8 @@ function computeStreak(logs) {
     dayCount[log_date] = (dayCount[log_date] ?? 0) + 1
   }
   const full = ds => (dayCount[ds] ?? 0) >= TOTAL
-  const today = getToday()
-  const d = new Date()
+  const today = getFajrDate()
+  const d = new Date(today + 'T12:00:00')
   if (!full(today)) d.setDate(d.getDate() - 1)
   let streak = 0
   while (true) {
