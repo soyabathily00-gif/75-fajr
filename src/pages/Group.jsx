@@ -8,12 +8,19 @@ function localDate(d = new Date()) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
 }
 
-function getToday() {
-  return localDate()
+function getFajrDate() {
+  const now = new Date()
+  const h = now.getHours(), m = now.getMinutes()
+  if (h < 4 || (h === 4 && m < 59)) {
+    const prev = new Date(now)
+    prev.setDate(prev.getDate() - 1)
+    return localDate(prev)
+  }
+  return localDate(now)
 }
 
 function getWeekStart() {
-  const d = new Date()
+  const d = new Date(getFajrDate() + 'T12:00:00')
   const day = d.getDay()
   d.setDate(d.getDate() - day + (day === 0 ? -6 : 1))
   return localDate(d)
@@ -41,9 +48,9 @@ function computeStreak(completedLogs) {
   }
 
   const isFullDay = ds => (dayCount[ds] ?? 0) >= TOTAL
-  const today = getToday()
+  const today = getFajrDate()
 
-  const d = new Date()
+  const d = new Date(today + 'T12:00:00')
   if (!isFullDay(today)) d.setDate(d.getDate() - 1)
 
   let streak = 0
@@ -69,7 +76,7 @@ export default function Group({ user }) {
   const [loading, setLoading] = useState(true)
   const channelRef = useRef(null)
 
-  const TODAY = getToday()
+  const TODAY = getFajrDate()
   const isAfterNoon = new Date().getHours() >= 12
 
   useEffect(() => {

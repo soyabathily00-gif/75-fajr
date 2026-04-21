@@ -15,19 +15,27 @@ function localDate(d = new Date()) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
 }
 
-function getToday() {
-  return localDate()
+// Fajr day runs 04:59 → next day 04:58. Before 04:59 still counts as yesterday.
+function getFajrDate() {
+  const now = new Date()
+  const h = now.getHours(), m = now.getMinutes()
+  if (h < 4 || (h === 4 && m < 59)) {
+    const prev = new Date(now)
+    prev.setDate(prev.getDate() - 1)
+    return localDate(prev)
+  }
+  return localDate(now)
 }
 
 function getWeekStart() {
-  const d = new Date()
+  const d = new Date(getFajrDate() + 'T12:00:00')
   const day = d.getDay()
   d.setDate(d.getDate() - day + (day === 0 ? -6 : 1))
   return localDate(d)
 }
 
 function getDayNumber() {
-  const diff = Math.floor((new Date(getToday()) - new Date(CHALLENGE_START)) / 86400000)
+  const diff = Math.floor((new Date(getFajrDate()) - new Date(CHALLENGE_START)) / 86400000)
   return Math.max(1, Math.min(75, diff + 1))
 }
 
@@ -39,7 +47,7 @@ export default function Dashboard({ user, onLogout, dark, onToggleDark }) {
   const [noteRule, setNoteRule] = useState(null)
   const [celebrated, setCelebrated] = useState(false)
 
-  const TODAY = getToday()
+  const TODAY = getFajrDate()
   const dayNumber = getDayNumber()
   const dateLabel = new Date().toLocaleDateString('fr-FR', {
     weekday: 'long', day: 'numeric', month: 'long',
